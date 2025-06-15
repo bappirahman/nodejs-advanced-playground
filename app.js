@@ -14,6 +14,7 @@ app.set("views", "views");
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
+const User = require("./models/user");
 // const { log } = require("console");
 // const Product = require("./models/product");
 // const User = require("./models/user");
@@ -22,6 +23,14 @@ const shopRoutes = require("./routes/shop");
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use((req, _, next) => {
+  User.findById("684d36ef5f60ef9a5475a250")
+    .then((user) => {
+      req.user = new User(user.username, user.email, user.cart, user._id);
+      next();
+    })
+    .catch(console.error);
+});
 
 // app.use((req, _, next) => {
 //   User.findByPk(1)

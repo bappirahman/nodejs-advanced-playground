@@ -29,7 +29,6 @@ exports.getProduct = (req, res, next) => {
 exports.getIndex = (req, res, next) => {
   Product.fetchAll()
     .then((products) => {
-      console.log("products", products);
       res.render("shop/index", {
         prods: products,
         pageTitle: "Shop",
@@ -59,38 +58,44 @@ exports.getCart = (req, res, next) => {
 
 exports.postCart = (req, res, next) => {
   const productId = req.body.productId;
-  let fetchedCart;
-  console.log("Inside postCart");
-
-  req.user
-    .getCart()
-    .then((cart) => {
-      fetchedCart = cart;
-      return cart.getProducts({ where: { id: productId } });
+  Product.findById(productId)
+    .then((product) => {
+      return req.user.addToCart(product);
     })
-    .then((products) => {
-      console.log("products is here", products);
+    .then((result) => console.log("result", result))
+    .catch(console.error);
+  // let fetchedCart;
+  // console.log("Inside postCart");
 
-      if (products.length > 0) {
-      }
-      const product = products[0];
-      let newQuantity = 1;
-      if (product) {
-      }
-      return Product.findByPk(productId)
-        .then((product) => {
-          // Everytning is ok till here
+  // req.user
+  //   .getCart()
+  //   .then((cart) => {
+  //     fetchedCart = cart;
+  //     return cart.getProducts({ where: { id: productId } });
+  //   })
+  //   .then((products) => {
+  //     console.log("products is here", products);
 
-          return fetchedCart.addProduct(product, {
-            through: { quantity: newQuantity },
-          });
-        })
-        .then(() => {
-          res.redirect("/cart");
-        })
-        .catch((err) => console.log(err));
-    })
-    .catch((err) => console.log(err));
+  //     if (products.length > 0) {
+  //     }
+  //     const product = products[0];
+  //     let newQuantity = 1;
+  //     if (product) {
+  //     }
+  //     return Product.findByPk(productId)
+  //       .then((product) => {
+  //         // Everytning is ok till here
+
+  //         return fetchedCart.addProduct(product, {
+  //           through: { quantity: newQuantity },
+  //         });
+  //       })
+  //       .then(() => {
+  //         res.redirect("/cart");
+  //       })
+  //       .catch((err) => console.log(err));
+  //   })
+  //   .catch((err) => console.log(err));
 };
 
 exports.getOrders = (req, res, next) => {
