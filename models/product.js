@@ -1,32 +1,35 @@
-const { mongoose, Schema } = require("mongoose");
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
 
 const productSchema = new Schema({
   title: {
     type: String,
-    required: true,
+    required: true
   },
   price: {
     type: Number,
-    required: true,
+    required: true
   },
   description: {
     type: String,
-    required: true,
+    required: true
   },
   imageUrl: {
     type: String,
-    required: true,
+    required: true
   },
   userId: {
     type: Schema.Types.ObjectId,
-    ref: "User",
-  },
+    ref: 'User',
+    required: true
+  }
 });
 
-module.exports = mongoose.model("Product", productSchema);
+module.exports = mongoose.model('Product', productSchema);
 
-// const { getDb } = require("../util/database");
-// const mongodb = require("mongodb");
+// const mongodb = require('mongodb');
+// const getDb = require('../util/database').getDb;
 
 // class Product {
 //   constructor(title, price, description, imageUrl, id, userId) {
@@ -34,8 +37,7 @@ module.exports = mongoose.model("Product", productSchema);
 //     this.price = price;
 //     this.description = description;
 //     this.imageUrl = imageUrl;
-//     console.log("con id", id);
-//     this._id = id;
+//     this._id = id ? new mongodb.ObjectId(id) : null;
 //     this.userId = userId;
 //   }
 
@@ -43,74 +45,64 @@ module.exports = mongoose.model("Product", productSchema);
 //     const db = getDb();
 //     let dbOp;
 //     if (this._id) {
-//       const { _id, ...updatedData } = this;
+//       // Update the product
 //       dbOp = db
-//         .collection("products")
-//         .updateOne(
-//           { _id: new mongodb.ObjectId(this._id) },
-//           { $set: updatedData }
-//         );
+//         .collection('products')
+//         .updateOne({ _id: this._id }, { $set: this });
 //     } else {
-//       dbOp = db.collection("products").insertOne(this);
-//       console.log("Inside insert");
+//       dbOp = db.collection('products').insertOne(this);
 //     }
-//     return dbOp.then(console.log).catch(console.error);
+//     return dbOp
+//       .then(result => {
+//         console.log(result);
+//       })
+//       .catch(err => {
+//         console.log(err);
+//       });
 //   }
+
 //   static fetchAll() {
-//     return getDb()
-//       .collection("products")
+//     const db = getDb();
+//     return db
+//       .collection('products')
 //       .find()
 //       .toArray()
-//       .then((products) => {
+//       .then(products => {
+//         console.log(products);
 //         return products;
 //       })
-//       .catch(console.error);
+//       .catch(err => {
+//         console.log(err);
+//       });
 //   }
-//   static findById(productId) {
-//     return getDb()
-//       .collection("products")
-//       .find({ _id: new mongodb.ObjectId(productId) })
+
+//   static findById(prodId) {
+//     const db = getDb();
+//     return db
+//       .collection('products')
+//       .find({ _id: new mongodb.ObjectId(prodId) })
 //       .next()
-//       .then((product) => {
+//       .then(product => {
+//         console.log(product);
 //         return product;
 //       })
-//       .catch(console.error);
+//       .catch(err => {
+//         console.log(err);
+//       });
 //   }
-//   static deleteById(productId) {
-//     return getDb()
-//       .collection("products")
-//       .deleteOne({ _id: new mongodb.ObjectId(productId) })
-//       .then((result) => {
-//         console.log("Deleted product");
-//         return result;
+
+//   static deleteById(prodId) {
+//     const db = getDb();
+//     return db
+//       .collection('products')
+//       .deleteOne({ _id: new mongodb.ObjectId(prodId) })
+//       .then(result => {
+//         console.log('Deleted');
 //       })
-//       .catch((err) => console.error(err));
+//       .catch(err => {
+//         console.log(err);
+//       });
 //   }
 // }
-
-// // const Product = sequelize.define("product", {
-// //   id: {
-// //     type: DataTypes.INTEGER.UNSIGNED,
-// //     allowNull: false,
-// //     autoIncrement: true,
-// //     primaryKey: true,
-// //   },
-// //   title: {
-// //     type: DataTypes.STRING,
-// //     allowNull: false,
-// //   },
-// //   price: {
-// //     type: DataTypes.DOUBLE,
-// //     allowNull: false,
-// //   },
-// //   imageUrl: {
-// //     type: DataTypes.STRING,
-// //     allowNull: false,
-// //   },
-// //   description: {
-// //     type: DataTypes.STRING,
-// //     allowNull: false,
-// //   },
-// // });
 
 // module.exports = Product;
