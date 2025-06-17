@@ -16,16 +16,14 @@ exports.postAddProduct = (req, res, next) => {
   const imageUrl = req.body.imageUrl;
   const price = +req.body.price; // converting string to number
   const description = req.body.description;
-
-  const product = new Product(
+  const product = new Product({
     title,
     price,
     description,
     imageUrl,
-    null,
-    req.user._id
-  );
-  const prom = product
+    userId: req.user,
+  });
+  product
     .save()
     .then((result) => {
       res.redirect("/");
@@ -74,7 +72,9 @@ exports.postDeleteProduct = (req, res, next) => {
 };
 
 exports.getProducts = (req, res, next) => {
-  Product.fetchAll()
+  Product.find()
+    // .select("imageUrl price")
+    // .populate("userId", "name")
     .then((products) => {
       res.render("admin/products", {
         prods: products,
