@@ -22,13 +22,43 @@ class User {
   }
 
   addToCart(product) {
-    const updatedProduct = {
-      items: [{ productId: product._id, quantity: 1 }],
+    const cartProductIndex = this.cart.items.findIndex((cp) =>
+      cp.productId.equals(product._id)
+    );
+    console.log(cartProductIndex);
+    console.log(product._id);
+    let newQuantity = 1;
+    const updatedCartItems = [...this.cart.items];
+    if (cartProductIndex >= 0) {
+      newQuantity = this.cart.items[cartProductIndex].quantity + 1;
+      updatedCartItems[cartProductIndex].quantity = newQuantity;
+    } else {
+      updatedCartItems.push({ productId: product._id, quantity: newQuantity });
+    }
+    const updatedCart = {
+      items: updatedCartItems,
     };
     return getDb()
       .collection("users")
-      .updateOne({ _id: this._id }, { $set: { cart: updatedProduct } })
+      .updateOne({ _id: this._id }, { $set: { cart: updatedCart } })
       .catch(console.error);
+  }
+  getCart() {
+    const productIds = this.cart.items.map((i) => i.productId);
+    return getDb()
+      .collection("products")
+      .find({ _id: { $in: productIds } })
+      .toArray()
+      .then((products) => {
+        return products.map((p) => {
+          return {
+            ...p,
+            quantity: this.cart.items.find((i) => {
+              i.productId.equals(p._id);
+            }).quantity,
+          };
+        });
+      });
   }
 
   static findById(userId) {
