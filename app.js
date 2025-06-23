@@ -1,4 +1,5 @@
 const path = require("path");
+const bcrypt = require('bcryptjs')
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -38,7 +39,7 @@ app.use(
 );
 app.use((req, res, next) => {
   if (!req.session.user) {
-    next();
+    return next();
   }
   User.findById(req.session.user._id)
     .then((user) => {
@@ -48,6 +49,8 @@ app.use((req, res, next) => {
     .catch(console.error);
 });
 
+
+
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
@@ -56,19 +59,7 @@ app.use(errorController.get404);
 
 mongoose
   .connect(process.env.MONGO_URL)
-  .then((result) => {
-    User.findOne().then((user) => {
-      if (!user) {
-        const user = new User({
-          name: "Bappi Rahman",
-          email: "cs.bappirahman@gmail.com.com",
-          cart: {
-            items: [],
-          },
-        });
-        user.save();
-      }
-    });
+  .then(() => {
     app.listen(3000);
   })
   .catch((err) => {
